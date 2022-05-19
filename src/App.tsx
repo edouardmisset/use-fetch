@@ -1,6 +1,6 @@
 import useFetch from './useFetch'
 
-const ImageFetch: (props: any) => JSX.Element = props => {
+const ImageFetch: () => JSX.Element = () => {
   const { response, error } = useFetch(
     'https://dog.ceo/api/breeds/image/random',
     {},
