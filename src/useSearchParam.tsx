@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 
-const useSearchParam: (param: string) => string | null = param => {
+const useSearchParam = (param: string): string | null => {
   const getValue = useCallback(
     () => new URLSearchParams(window.location.search).get(param),
     [param]
