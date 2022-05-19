@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react'
 const useFetch: (
   url: string,
   options: RequestInit,
-) => { response: Response | null; error: Error | unknown } = (url, options) => {
-  const [response, setResponse] = useState<Response | null>(null)
+) => { response: any; error: Error | unknown } = (url, options) => {
+  const [response, setResponse] = useState<unknown>(null)
   const [error, setError] = useState<Error | unknown>(null)
 
   useEffect(() => {
