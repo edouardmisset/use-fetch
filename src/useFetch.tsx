@@ -1,9 +1,16 @@
 import { useEffect, useState } from 'react'
 
-const useFetch: (
-  url: string,
-  options: RequestInit,
-) => { response: any; error: Error | unknown } = (url, options) => {
+const useFetch = ({
+  url,
+  options,
+}: {
+  url: string
+  options?: ResponseInit
+}): {
+  response: any
+  error: Error | unknown
+  isLoading: boolean
+} => {
   const [response, setResponse] = useState<unknown>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<Error | unknown>(null)
