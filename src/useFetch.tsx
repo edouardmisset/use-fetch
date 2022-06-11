@@ -10,16 +10,21 @@ const useFetch = ({
   response: any
   error: Error | unknown
   isLoading: boolean
+  abort: VoidFunction
 } => {
   const [response, setResponse] = useState<unknown>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<Error | unknown>(null)
+  const [abort, setAbort] = useState<VoidFunction>(() => {})
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true)
-        const res = await fetch(url, options)
+        const abortController = new AbortController()
+        const { signal } = abortController
+        setAbort(abortController.abort)
+        const res = await fetch(url, { ...options, signal })
         const json = await res.json()
         setResponse(json)
       } catch (error) {
@@ -31,7 +36,7 @@ const useFetch = ({
     fetchData()
   }, [options, url])
 
-  return { response, error, isLoading }
+  return { response, error, isLoading, abort }
 }
 
 export default useFetch
