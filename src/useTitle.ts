@@ -1,17 +1,17 @@
 import { useEffect, useRef } from 'react'
 
 export const useTitle = (title: string): void => {
-  const documentDefined = typeof document !== 'undefined'
-  const originalTitle = useRef(documentDefined ? document.title : null)
+  const isDocumentDefined = document !== undefined
+  const titleRef = useRef(isDocumentDefined ? document.title : undefined)
 
   useEffect(() => {
-    if (!documentDefined) return
-    const OT = originalTitle?.current
+    if (!isDocumentDefined) return
+    const previousTitle = titleRef?.current
 
     if (document.title !== title) document.title = title
 
     return () => {
-      if (OT) document.title = OT
+      if (previousTitle !== undefined) document.title = previousTitle
     }
-  }, [documentDefined, title])
+  }, [isDocumentDefined, title])
 }
