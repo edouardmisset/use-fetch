@@ -17,16 +17,17 @@ const useFetch = (props: UseFetchProps): UseFetchResult => {
   const [response, setResponse] = useState<unknown>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<Error | unknown>(null)
-  const [abort, setAbort] = useState<(reason?: any) => void>(() => { })
+  const [abort, setAbort] = useState<VoidFunction>(() => () => {})
 
   useEffect(() => {
+    const controller = new AbortController()
+    // Save the abort function with proper context binding.
+    setAbort(() => () => controller.abort())
+
     const fetchData = async () => {
       try {
         setIsLoading(true)
-        const controller = new AbortController()
-        const { signal } = controller
-        setAbort(() => () => controller.abort())
-        const res = await fetch(url, { ...options, signal })
+        const res = await fetch(url, { ...options, signal: controller.signal })
         const json = await res.json()
         setResponse(json)
       } catch (error) {
@@ -35,14 +36,17 @@ const useFetch = (props: UseFetchProps): UseFetchResult => {
         setIsLoading(false)
       }
     }
+
     fetchData()
+
+    // Cleanup: abort fetch and reset state
     return () => {
-      abort()
+      controller.abort()
       setResponse(null)
       setError(null)
       setIsLoading(false)
     }
-  }, [options, url])
+  }, [url, options])
 
   return { response, error, isLoading, abort }
 }
