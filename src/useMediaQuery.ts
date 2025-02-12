@@ -4,7 +4,7 @@ export const useMediaQuery = (query: string): boolean => {
   const getMatches = useCallback(
     (query: string): boolean =>
       // Prevents SSR issues
-      typeof window !== 'undefined' ? window.matchMedia(query).matches : false,
+      globalThis.window === undefined ? false : window.matchMedia(query).matches,
     [],
   )
 
@@ -22,18 +22,10 @@ export const useMediaQuery = (query: string): boolean => {
     handleChange()
 
     // Listen matchMedia
-    if (matchMedia.addListener) {
-      matchMedia.addListener(handleChange)
-    } else {
-      matchMedia.addEventListener('change', handleChange)
-    }
+    matchMedia.addEventListener('change', handleChange)
 
     return () => {
-      if (matchMedia.removeListener) {
-        matchMedia.removeListener(handleChange)
-      } else {
-        matchMedia.removeEventListener('change', handleChange)
-      }
+      matchMedia.removeEventListener('change', handleChange)
     }
   }, [handleChange, query])
 
