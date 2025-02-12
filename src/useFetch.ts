@@ -25,7 +25,7 @@ const useFetch = (props: UseFetchProps): UseFetchResult => {
         setIsLoading(true)
         const controller = new AbortController()
         const { signal } = controller
-        setAbort(() => controller.abort)
+        setAbort(() => () => controller.abort())
         const res = await fetch(url, { ...options, signal })
         const json = await res.json()
         setResponse(json)
@@ -36,6 +36,12 @@ const useFetch = (props: UseFetchProps): UseFetchResult => {
       }
     }
     fetchData()
+    return () => {
+      abort()
+      setResponse(null)
+      setError(null)
+      setIsLoading(false)
+    }
   }, [options, url])
 
   return { response, error, isLoading, abort }
