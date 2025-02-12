@@ -4,15 +4,17 @@ export const useOnline = (): boolean => {
   const [isOnline, setIsOnline] = useState(false)
 
   useEffect(() => {
-    const setOffline: VoidFunction = () => setIsOnline(false)
-    const setOnline: VoidFunction = () => setIsOnline(true)
+    const controller = new AbortController()
+    const signal = controller.signal
 
-    window.addEventListener('offline', setOffline)
-    window.addEventListener('online', setOnline)
+    const setOffline = () => setIsOnline(false)
+    const setOnline = () => setIsOnline(true)
+
+    window.addEventListener('offline', setOffline, { signal })
+    window.addEventListener('online', setOnline, { signal })
 
     return () => {
-      window.removeEventListener('offline', setOffline)
-      window.removeEventListener('online', setOnline)
+      controller.abort()
     }
   }, [])
 
