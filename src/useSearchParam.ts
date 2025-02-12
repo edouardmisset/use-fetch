@@ -9,18 +9,16 @@ const useSearchParam = (param: string): string | null => {
   const [value, setValue] = useState(getValue)
 
   useEffect(() => {
-    const onChange = () => {
-      setValue(getValue())
-    }
+    const onChange = () => setValue(getValue())
 
-    window.addEventListener('popstate', onChange)
-    window.addEventListener('pushstate', onChange)
-    window.addEventListener('replacestate', onChange)
+    const { abort, signal } = new AbortController()
+
+    window.addEventListener('popstate', onChange, { signal })
+    window.addEventListener('pushstate', onChange, { signal })
+    window.addEventListener('replacestate', onChange, { signal })
 
     return () => {
-      window.removeEventListener('popstate', onChange)
-      window.removeEventListener('pushstate', onChange)
-      window.removeEventListener('replacestate', onChange)
+      abort()
     }
   }, [getValue])
 
